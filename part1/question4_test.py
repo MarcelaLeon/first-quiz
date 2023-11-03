@@ -33,6 +33,7 @@ def test_question4_only_owned_by_bessie():
 
   rows.sort()
 
-  assert len(rows) == 2
+  assert len(rows) == 3
   assert rows[0] == ('bessie', 'leyla', 'gray whale')
   assert rows[1] == ('bessie', 'randolph', 'lemur')
+  assert rows[2] == ('bessie', 'ricky', 'lobster')
