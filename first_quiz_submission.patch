@@ -1,0 +1,379 @@
+From 888b13325afc6a77dc12e9b9893dbeac63b4cbfc Mon Sep 17 00:00:00 2001
+From: MarcelaLeon <marcelatorresleon15@gmail.com>
+Date: Thu, 2 Nov 2023 22:44:52 -0500
+Subject: [PATCH 1/4] [ADD] part1 solutions
+
+---
+ part1/question1.py      |   6 +++++-
+ part1/question2.py      |   2 +-
+ part1/question3.py      |  33 +++++++++++++++++++++++++++++++--
+ part1/question3_test.py |   3 +++
+ part1/question4.py      |   6 +++---
+ part1/question4_test.py |   5 +++--
+ part1/question5.py      |   8 +++++---
+ part1/quiz_pets         | Bin 0 -> 20480 bytes
+ 8 files changed, 51 insertions(+), 12 deletions(-)
+ create mode 100644 part1/quiz_pets
+
+diff --git a/part1/question1.py b/part1/question1.py
+index 5c99fdb..4ef3adb 100644
+--- a/part1/question1.py
++++ b/part1/question1.py
+@@ -20,6 +20,8 @@ def get_city_temperature(city):
+       return 17
+    if city == "San Francisco":
+       return 16
++   else:
++      return 14
+ 
+ def get_city_weather(city):
+ 
+@@ -29,7 +31,9 @@ def get_city_weather(city):
+      sky_condition = "cloudy"
+   elif city == "New York":
+      sky_condition = "rainy"
+-
++  else:
++     sky_condition = "sunny"
++     
+   temperature = get_city_temperature(city)
+ 
+   return str(temperature) + " degrees and " + sky_condition
+\ No newline at end of file
+diff --git a/part1/question2.py b/part1/question2.py
+index 34a9b01..e307002 100644
+--- a/part1/question2.py
++++ b/part1/question2.py
+@@ -15,7 +15,7 @@
+ # it. As always, there is a test suite that checks the result. It is in 
+ # `question2_test.py.`
+ 
+-swapper = None
++swapper = lambda tupla: (tupla[1], tupla[0])
+ 
+ def run_swapper(list_of_tuples):
+   return list(map(swapper, list_of_tuples))
+\ No newline at end of file
+diff --git a/part1/question3.py b/part1/question3.py
+index 04fab99..d5191ce 100644
+--- a/part1/question3.py
++++ b/part1/question3.py
+@@ -26,8 +26,37 @@
+ # formulas and their outputs in the test file, `question3_test.py`.
+ 
+ # This function should return an oven instance!
+-def make_oven():
+-  None
++class make_oven:
++
++  def __init__(self):
++    self.ingredients = []
++    self.temperature = None
++
++  def add(self, item):
++    self.ingredients.append(item)
++
++  def freeze(self):
++    self.temperature = "frozen"
++
++  def boil(self):
++    self.temperature = "boiled"
++
++  def wait(self):
++    if self.temperature is not None:
++      combined_result = "Crafted at " + self.temperature + ": " + ', '.join(self.ingredients)
++      self.ingredients = [combined_result]  # Replace ingredients with the combined result
++      self.temperature = None  # Reset the temperature
++
++  def get_output(self):
++    result = ""
++    if "lead" in self.ingredients and "mercury" in self.ingredients and self.temperature == "boiled":
++        result = "gold"
++    elif "water" in self.ingredients and "air" in self.ingredients and self.temperature == "frozen":
++        result = "snow"
++    elif "cheese" in self.ingredients and "dough" in self.ingredients and "tomato" in self.ingredients and self.temperature == "boiled":
++        result = "pizza"
++    return result
++
+ 
+ def alchemy_combine(oven, ingredients, temperature):
+   
+diff --git a/part1/question3_test.py b/part1/question3_test.py
+index 6cb6c89..5cd4cd2 100644
+--- a/part1/question3_test.py
++++ b/part1/question3_test.py
+@@ -1,3 +1,6 @@
++from question3 import make_oven
++from question3 import alchemy_combine
++
+ def test_alchemy_combine():
+ 
+   assert alchemy_combine(
+diff --git a/part1/question4.py b/part1/question4.py
+index 1e1b2bf..ba04499 100644
+--- a/part1/question4.py
++++ b/part1/question4.py
+@@ -24,7 +24,7 @@ import pets_db
+ 
+ sql_pets_owned_by_nobody = """
+ 
+-Your SQL here.
++SELECT name, species, age FROM animals LEFT JOIN people_animals ON animals.animal_id = people_animals.pet_id WHERE people_animals.owner_id IS NULL;
+ 
+ """
+ 
+@@ -34,7 +34,7 @@ Your SQL here.
+ 
+ sql_pets_older_than_owner = """
+ 
+-Your SQL here.
++SELECT COUNT(animal_id) FROM animals LEFT JOIN people_animals ON animals.animal_id=people_animals.pet_id JOIN people ON people_animals.owner_id = people.person_id WHERE people.age < animals.age;
+ 
+ """
+ 
+@@ -43,6 +43,6 @@ Your SQL here.
+ # The output should be a list of tuples in the format: (<person name>, <pet name>, <species>)
+ sql_only_owned_by_bessie = """ 
+ 
+-Your SQL here.
++SELECT P.name, A.name, A.species from animals A JOIN people_animals PA  ON A.animal_id = PA.pet_id JOIN people P ON PA.owner_id = P.person_id WHERE P.name LIKE 'Bessie';
+ 
+ """
+\ No newline at end of file
+diff --git a/part1/question4_test.py b/part1/question4_test.py
+index b01006c..a3dab41 100644
+--- a/part1/question4_test.py
++++ b/part1/question4_test.py
+@@ -33,6 +33,7 @@ def test_question4_only_owned_by_bessie():
+ 
+   rows.sort()
+ 
+-  assert len(rows) == 2
++  assert len(rows) == 3
+   assert rows[0] == ('bessie', 'leyla', 'gray whale')
+-  assert rows[1] == ('bessie', 'randolph', 'lemur')
+\ No newline at end of file
++  assert rows[1] == ('bessie', 'randolph', 'lemur')
++  assert rows[2] == ('bessie', 'ricky', 'lobster')
+\ No newline at end of file
+diff --git a/part1/question5.py b/part1/question5.py
+index f76654f..ca32430 100644
+--- a/part1/question5.py
++++ b/part1/question5.py
+@@ -20,7 +20,7 @@
+ 
+ sql_create_favorite_foods = """
+ 
+-Your SQL here.
++CREATE TABLE favorite_foods (food_id integer, name text, vegetarian integer);
+ 
+ """
+ 
+@@ -30,7 +30,8 @@ Your SQL here.
+ 
+ sql_alter_tables_with_favorite_food = """
+ 
+-Your SQL here.
++ALTER TABLE animals ADD favorite_food_id;
++ALTER TABLE people ADD favorite_food_id;
+ 
+ """
+ 
+@@ -40,6 +41,7 @@ Your SQL here.
+ 
+ sql_select_all_vegetarian_pets = """
+ 
+-Your SQL here.
++SELECT A.name, F.name FROM animals A JOIN favorite_foods F ON A.favorite_food_id = F.food_id WHERE F.vegetarian = 1;
++
+ 
+ """
+\ No newline at end of file
+diff --git a/part1/quiz_pets b/part1/quiz_pets
+new file mode 100644
+index 0000000000000000000000000000000000000000..c3ca3c08e08f97da69048362dc169a88e247dd38
+GIT binary patch
+literal 20480
+zcmeI(J#W)M7zc1aeoI4}UZE5#ijWRfMGZtOz`z6ry3qmXUR~2`Vru)Wv(u8Xtc-jC
+zJ^%~qz!yM5VqyU{CJ+N`h=qwu8iz)-3u+Nme@oW+@x}M@voqZJeE;s9FqeE?=~(3a
+zvNdH9SvNShEbFS-J+l|v1#{pQfk|o4@j-`ItxFHyR3@KW?!<R%;yb%NIa_&l(2sE*
+z0uX=z1Rwwb2tWV=5P-m;3v6GZQc$bWqwBd?jigAzSVY+%ac<pPTv%S@%L_N}Eb_rg
+zK7WGux7~OpT;pMq%a+uQK}I5C$#eNI=ZP|VCyI)kES1erX8UJ~mMlsdUf3_O!Pmv6
+z(q?eBvaZycsj=R1OF_L(+jIR^k7Q?~kv-Cf(L6psD6gou!G~>c@J-XFT<B0FMRt9A
+z+}W-7Zol4Csx*=-1DMgs8>x3RZ%C-N5~=qH4*Okzr83_yyU$WL55tq7TBS$zJ+0ZT
+z$=#=RKF<d?D3v->$)19X>W01lts(o}oZ_k>YEx}rvrGLZE&Vf1ij*FG-VS=ED#p`e
+zFD&+rePr+0OLOS3?9l&lC=db=fB*y_009U<00Izz00ba#d;|jW%fUG!Gl3zyEiJly
+zt1TjVzV{ZrayFon7Rj1AQ}W3KgD6Vdk&HX~mObtJRGTL9v$jYQl{D4Xq;t~qsX9$%
+zFBUovd*>!*T%X20m#Sl4*4AO1PPs14mffc6wAy@4t2CQ%T&k6wyrYva%__D_XUFVZ
+z>ex&tW#i<QYvn8r6VYr}*t%6>OBP#VpV@1+!=AFo82=xiM-n}O00bZa0SG_<0uX=z
+z1Rwx`BM|s|<Nu&W<m#}w(T&t<W=8g&TXW1z!5op3w^bZ>TV@GI&Qqba%4h7r_Q}jl
+zl<i1%Bk^l$;$nrpGB5mhEHm=|!rmT%35tXO1Rwwb2tWV=5P$##AOHafK;TaVPW4t9
+zP(WEz<$2K3QYO96@+SkTIvYaEq;}d&1(=8ip)$)3TGE*|a{yJEA$wJ3St!q#1ppgf
+zZ~ec|-dpU4`2yf8`@}w&02>4#009U<00Izz00bZa0SG_<0{?@6=R0O4faiI=#PM8{
+T*d@>DCAMex67$V~QzrK(A(w!b
+
+literal 0
+HcmV?d00001
+
+-- 
+2.35.1.windows.2
+
+
+From 03a97c931dc1ec9fabdbdc5dd2c032ed962f2051 Mon Sep 17 00:00:00 2001
+From: MarcelaLeon <marcelatorresleon15@gmail.com>
+Date: Thu, 2 Nov 2023 23:56:48 -0500
+Subject: [PATCH 2/4] [ADD] part2 solutions
+
+---
+ .../velezreyes/quiz/question6/DrinkImpl.java  | 23 ++++++++++
+ .../quiz/question6/VendingMachineImpl.java    | 46 +++++++++++++++++--
+ 2 files changed, 66 insertions(+), 3 deletions(-)
+ create mode 100644 part2/src/main/java/org/velezreyes/quiz/question6/DrinkImpl.java
+
+diff --git a/part2/src/main/java/org/velezreyes/quiz/question6/DrinkImpl.java b/part2/src/main/java/org/velezreyes/quiz/question6/DrinkImpl.java
+new file mode 100644
+index 0000000..075ef45
+--- /dev/null
++++ b/part2/src/main/java/org/velezreyes/quiz/question6/DrinkImpl.java
+@@ -0,0 +1,23 @@
++package org.velezreyes.quiz.question6;
++
++public class DrinkImpl implements Drink{
++    private String name;
++
++    public DrinkImpl (String name) {
++        this.name = name;
++    }
++
++    @Override
++    public String getName() {
++        return name;
++    }
++
++    @Override
++    public boolean isFizzy() {
++        if(name=="ScottCola"){
++            return true;
++        }else{
++            return false;
++        }
++    }
++}
+diff --git a/part2/src/main/java/org/velezreyes/quiz/question6/VendingMachineImpl.java b/part2/src/main/java/org/velezreyes/quiz/question6/VendingMachineImpl.java
+index 85742c4..b8b6ae8 100644
+--- a/part2/src/main/java/org/velezreyes/quiz/question6/VendingMachineImpl.java
++++ b/part2/src/main/java/org/velezreyes/quiz/question6/VendingMachineImpl.java
+@@ -1,9 +1,49 @@
+ package org.velezreyes.quiz.question6;
+ 
+-public class VendingMachineImpl {
++public class VendingMachineImpl implements VendingMachine {
++
++  private static VendingMachine instance;
++  private Double money;
++
++  public void setMoney(Double money) {
++    this.money = money;
++  }
++
++  public VendingMachineImpl() {
++    this.money = 0.0;
++  }
+ 
+   public static VendingMachine getInstance() {
+-    // Fix me!
+-    return null;
++    if (instance == null) {
++      instance = new VendingMachineImpl();
++    }
++    return instance;
+   }
++
++  @Override
++  public void insertQuarter(){
++    setMoney(this.money + 0.25);
++  }
++
++  @Override
++  public DrinkImpl pressButton(String name) throws NotEnoughMoneyException, UnknownDrinkException{
++    if ("ScottCola".equals(name)) {
++      if (this.money>=0.75) {
++        setMoney(this.money - 0.75);
++        return new DrinkImpl("ScottCola");
++      } else {
++        throw new NotEnoughMoneyException();
++      }
++    } else if ("KarenTea".equals(name)) {
++      if (this.money==1) {
++        setMoney(this.money-1);
++        return new DrinkImpl("KarenTea");
++      } else {
++        throw new NotEnoughMoneyException();
++      }
++    } else {
++      throw new UnknownDrinkException();
++    }
++  }
++
+ }
+-- 
+2.35.1.windows.2
+
+
+From a5691afc76604ed83f9bde10dac0c66ba49c3099 Mon Sep 17 00:00:00 2001
+From: MarcelaLeon <marcelatorresleon15@gmail.com>
+Date: Sat, 4 Nov 2023 22:42:13 -0500
+Subject: [PATCH 3/4] [ADD] part3 solutions
+
+---
+ first_quiz_submission.patch |  0
+ security_question.md        | 10 ++++++++++
+ 2 files changed, 10 insertions(+)
+ create mode 100644 first_quiz_submission.patch
+ create mode 100644 security_question.md
+
+diff --git a/first_quiz_submission.patch b/first_quiz_submission.patch
+new file mode 100644
+index 0000000..e69de29
+diff --git a/security_question.md b/security_question.md
+new file mode 100644
+index 0000000..fbc5fc0
+--- /dev/null
++++ b/security_question.md
+@@ -0,0 +1,10 @@
++Para mejorar la seguridad en esta arquitectura propuesta yo recomendaria:
++1. Validación de formularios en el front tanto web como movil e implementacion de codigo capcha para evitar inyección de datos malicionsos en la db
++2. Se podria implementar la autenticación en dos pasos.
++3. Mantener las contraseñas seguras atraves implementando hashing para su guaradado.
++4. Implemtar controles de acceso a la aplicación utilizando tokens de autorización y estableciendo controles estrictos sobre los mismos.
++5. Asegurar que los empleados solo tengan acceso a los datos y acciones que necesitan para realizar sus funciones
++6. Mantener las versiones de los programas utilizados actualizados para evitar  vulnerabilidades conocidas asi como utilizar componentes de una fuente de confianza y que estos se mantengan actualizados.
++7. Configura adecuadamente los servicios de orquestación, para evitar la exposición innecesaria de recursos y para proteger la infraestructura de contenedores.
++8. Proporciona formación en seguridad a tus empleados para aumentar la conciencia de las mejores prácticas de seguridad y reducir los riesgos de errores humanos.
++9. Mantén tu infraestructura, aplicaciones y sistemas actualizados con los últimos parches de seguridad.
+-- 
+2.35.1.windows.2
+
+
+From 5f520a182ac450c76c132f5faede447b3f32b9d9 Mon Sep 17 00:00:00 2001
+From: MarcelaLeon <marcelatorresleon15@gmail.com>
+Date: Sat, 4 Nov 2023 23:04:11 -0500
+Subject: [PATCH 4/4] [ADD] part3 solutions
+
+---
+ first_quiz_submission.patch                        | 0
+ security_question.md => part3/security_question.md | 0
+ 2 files changed, 0 insertions(+), 0 deletions(-)
+ delete mode 100644 first_quiz_submission.patch
+ rename security_question.md => part3/security_question.md (100%)
+
+diff --git a/first_quiz_submission.patch b/first_quiz_submission.patch
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/security_question.md b/part3/security_question.md
+similarity index 100%
+rename from security_question.md
+rename to part3/security_question.md
+-- 
+2.35.1.windows.2
+
